@@ -1,0 +1,53 @@
+version: '2'
+
+services:
+    hub:
+        build:
+            context: "./docker-compose-containers-cfg/hub"
+        networks:
+            - jbnetwork
+        volumes:
+            - ${DATA_FOLDER}/hub/data:/opt/hub/data 
+            - ${DATA_FOLDER}/hub/conf:/opt/hub/conf  
+            - ${DATA_FOLDER}/hub/logs:/opt/hub/logs  
+            - ${DATA_FOLDER}/hub/backups:/opt/hub/backups
+        container_name: JBHUB 
+    youtrack:
+        build:
+            context: "./docker-compose-containers-cfg/youtrack"
+        networks:
+            - jbnetwork
+        volumes:
+            - ${DATA_FOLDER}/youtrack/data:/opt/youtrack/data 
+            - ${DATA_FOLDER}/youtrack/conf:/opt/youtrack/conf  
+            - ${DATA_FOLDER}/youtrack/logs:/opt/youtrack/logs  
+            - ${DATA_FOLDER}/youtrack/backups:/opt/youtrack/backups  
+        container_name: JBYOUTRACK  
+    upsource:
+        build:
+            context: "./docker-compose-containers-cfg/upsource"
+        networks:
+            - jbnetwork
+        volumes:
+            - ${DATA_FOLDER}/upsource/data:/opt/upsource/data 
+            - ${DATA_FOLDER}/upsource/conf:/opt/upsource/conf  
+            - ${DATA_FOLDER}/upsource/logs:/opt/upsource/logs  
+            - ${DATA_FOLDER}/upsource/backups:/opt/upsource/backups  
+        container_name: JBUPSOURCE 
+    reverseproxy:
+        build:
+            context: "./docker-compose-containers-cfg/reverseproxy"
+        networks:
+            jbnetwork:
+                aliases:
+                    - ${YOUTRACK_DOMAIN}
+                    - ${HUB_DOMAIN}
+                    - ${UPSOURCE_DOMAIN}
+        ports:
+            - 80:80
+        restart: always
+        container_name: JBREVERSEPROXY
+
+        
+networks:
+  jbnetwork:

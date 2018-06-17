@@ -4,10 +4,17 @@ if (( $EUID != 0 )); then
 fi
 
 
-export HUB_DOMAIN=hub.local
-export YOUTRACK_DOMAIN=youtrack.local
-export UPSOURCE_DOMAIN=upsource.local
+export HUB_DOMAIN=jbhub.deploy.me.uk
+export YOUTRACK_DOMAIN=jbyoutrack.deploy.me.uk
+export UPSOURCE_DOMAIN=jbupsource.deploy.me.uk
 export DATA_FOLDER=./shared
+
+if [ "$1" = "down" ] 
+then
+    docker-compose down -t 60
+    exit
+fi
+
 
 
 if [[ ! -e "$DATA_FOLDER/foldersok" ]]; then

@@ -34,6 +34,25 @@ services:
             - ${DATA_FOLDER}/upsource/logs:/opt/upsource/logs  
             - ${DATA_FOLDER}/upsource/backups:/opt/upsource/backups  
         container_name: JBUPSOURCE 
+    teamcityserver:
+        build:
+            context: "./docker-compose-containers-cfg/teamcityserver"
+        networks:
+            - jbnetwork
+        volumes:
+            - ${DATA_FOLDER}/teamcity/data:/data/teamcity_server/datadir 
+            - ${DATA_FOLDER}/teamcity/logs:/opt/teamcity/logs  
+        container_name: JBTCSERVER
+    teamcityagent:
+        build:
+            context: "./docker-compose-containers-cfg/teamcityagent"
+        environment:
+            - SERVER_URL=${TEAMCITY_DOMAIN}
+        networks:
+            - jbnetwork
+        volumes:
+            - ${DATA_FOLDER}/teamcityagent/conf:/data/teamcity_agent/conf 
+        container_name: JBTCAGENT           
     reverseproxy:
         build:
             context: "./docker-compose-containers-cfg/reverseproxy"
@@ -43,6 +62,7 @@ services:
                     - ${YOUTRACK_DOMAIN}
                     - ${HUB_DOMAIN}
                     - ${UPSOURCE_DOMAIN}
+                    - ${TEAMCITY_DOMAIN}
         ports:
             - 80:80
         restart: always
